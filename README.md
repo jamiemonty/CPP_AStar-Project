@@ -1,4 +1,4 @@
-**<img width="693" height="281" alt="image" src="https://github.com/user-attachments/assets/98d98a83-a078-4766-a187-883fa0f50ec6" />
+
 **# A* Pathfinding Algorithm
 ## C++ Programming Project
 
@@ -44,8 +44,8 @@ A* is widely used in robotics, game development, and navigation systems. This pr
 
 ### Architecture
 
-#### UML Class Diagram
-![UML Diagram](images/uml-mvp.png)
+#### UML Class Diagram (MVP)
+**<img width="693" height="281" alt="image" src="https://github.com/user-attachments/assets/98d98a83-a078-4766-a187-883fa0f50ec6" />
 
 ### Class Structure
 
