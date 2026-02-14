@@ -3,7 +3,7 @@
 ## C++ Programming Project
 
 **Author:** Jamie Montgomery  
-**Student ID:** [Your ID]  
+**Student ID:** G00419525  
 **Module:** C++ Programming  
 **Lecturer:** Michelle Lynch  
 **Academic Year:** 2025-2026
