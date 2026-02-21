@@ -235,6 +235,10 @@ GitHub Copilot and ChatGPT were used for:
 4. [C++ Reference - std::priority_queue](https://en.cppreference.com/w/cpp/container/priority_queue)
 
 5. Lecture notes and materials provided by Michelle Lynch, Atlantic TU.
+  
+6. [Setup std::vector in class constructor](https://stackoverflow.com/questions/11415469/setup-stdvector-in-class-constructor?newreg=3ea56c42483440c1947370acf4821c9d)
+   
+7. [W3Schools - C++ Constructors](https://www.w3schools.com/cpp/cpp_constructors.asp)
 
 ---
 
