@@ -59,6 +59,15 @@ A* is widely used in robotics, game development, and navigation systems. This pr
   - `setCell()`: Modify grid cells
   - `PrintGrid()`: Visualize the grid
   - `Solve()`: Perform A* pathfinding (to be implemented)
+ 
+**Position Struct**
+- **Purpose:** Represents a 2D  coordinate on the grid
+- **Members:**
+    - `x`: Column coordinate
+    - `y`: Row coordinate
+- **Operators:**
+    - `operator==`: Enables position comparison (used to check if the goal is reached)
+    - `operator<`: Enables use in `std::map` for path finding data structures
 
 ### Design Decisions
 
@@ -88,6 +97,23 @@ I chose `char` for cell types rather than `int` or enum for clarity:
 This makes visual debugging immediate and intuitive.
 
 ---
+
+#### std::map vs std::unordered_map
+I decided to use `std::map<Position>` for storing position relationships in the A* rather than `std::unordered_map`. While unordered_map offers 0(1) average lookup time vs maps 0(log n), this required implementing a custom hash function for Position.
+**Rationale:**
+- Map only requires `operator<`, which demonstrates operator overloading clearly
+- For grid sizes used in testing (10x10), the performance difference is unnoticable
+- Code clarity and maintainability were prioritised over the performance gains, as performance gains would be more complex than needed
+- The implementation is easier to explain and debug
+
+**PathResult Struct**
+- **Purpose:** Bundles all pathfinding results together
+- **Members:**
+    - `pathFound`: Boolean indicating if a path exists
+    - `path`: Vector of positions from start to goal
+    - `nodesExpanded`: Statistics on algorithm efficiency
+    - `pathLength`: Number of steps in the path
+    - `timeTaken`: Performance metric in milliseconds
 
 ## Code Examples
 
@@ -129,6 +155,28 @@ int main() {
 
 ---
 
+### Position Struct Usage
+
+```
+//  Create positions
+Position start(1, 1)
+Position goal(8, 8)
+
+// Place on grid
+astar.setCell(start.x, start.y, 'S');
+astar.setCell(goal.x, goal.y, 'G');
+
+// Check equality
+if (start == goal) {
+    cout << "Already at goal!\n";
+}
+
+// Compare positions (for std::map)
+if (start < goal) {
+    cout << "Start comes before goal in ordering\n";
+}
+```
+
 ## Testing & Validation
 
 ### Test Cases
@@ -156,8 +204,8 @@ int main() {
 
 | Week | Date | Milestone | Status |
 |------|------|-----------|--------|
-| 1 | 19 Jan 2026 | Grid representation & constructor | ✅ Complete |
-| 2 | 26 Jan 2026 | A* algorithm implementation | 🔄 In Progress |
+| 1 | 19 Jan 2026 | Grid representation & constructor | Complete |
+| 2 | 26 Jan 2026 | Position struct, PathResult, helper methods | Complete |
 | 3 | 02 Feb 2026 | Weighted terrain | 📅 Planned |
 | 4 | 09 Feb 2026 | Testing & documentation | 📅 Planned |
 
@@ -189,6 +237,11 @@ I used lab sessions as checkpoints:
 **Solution:** Chose `char` for immediate visual feedback during debugging  
 **Learning:** Simple representations often work best during development; can refactor later if needed.
 
+#### Challenge 3: Understanding Operator Overloading
+**Problem:** Initially not clear to me why Position needed `operator<` and when to use is vs `operator==`
+**Solution:** Leared that `operator==` checks equality (if I am at the goal), while `operator<` defines ordering for containers like `std::map`. The map needs to organise positions, which requires a comparision function.
+**Learning:** Operator overloading makes custom types work good with S|TL containers. The `operator<` creates lexicographic ordering (compare x first, then y), similar to dictonary sorting.
+
 ### What Worked Well
 - **Incremental development:** Building MVP first gave a solid foundation
 - **Visual output:** ASCII grid made debugging intuitive
@@ -209,6 +262,9 @@ GitHub Copilot and ChatGPT were used for:
 - Understanding STL container usage (`std::vector`, `std::priority_queue`)
 - Debugging compilation errors
 - Clarifying A* algorithm pseudocode
+- Explaining operator overloading
+- Understanding std::map requirements and hash functions
+- Clarifying Path Result struct design patterns
 
 ### How AI Was Used Appropriately
 - All code suggestions were **adapted to my design**
