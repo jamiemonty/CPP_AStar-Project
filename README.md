@@ -115,6 +115,68 @@ I decided to use `std::map<Position>` for storing position relationships in the 
     - `pathLength`: Number of steps in the path
     - `timeTaken`: Performance metric in milliseconds
 
+## Algorithm Deep Dive
+
+### The A* Algorithm
+
+A* is an informed search algorithm that uses a heuristic to find the shortest path efficiently. The formula is:
+
+```
+f(n) = g(n) + h(n)
+```
+Where:
+- **f(n)**: Total estimated cost (priority score)
+- **g(n)**: Actual cost from start to current node
+- **h(n)**: Heuristic estimate from current node to goal
+
+## Heuristic Selection: Manhattan Distance
+
+### Why Manhattan Distance?
+
+I decided to go with the Manhattan distance as the heuristic function because:
+1. **Admissibility**: Manhattan distance never overestimates the actual path cost for 4-way grid movement
+2. **Consistency**: The heuristic is montonic (satisfies the triangle inequality)
+3. **Optimal for Grid Movement**: Good match for grids where diagonal movement is not allowed
+4. **Computational Efficiency**: Simple calculation (no square roots like Euclidean distance)
+
+#### Mathematical Definition
+
+```
+h(n) = |x1 - x2 | + |y1 - y2|
+```
+This calculates the minimum number of moves required if there was no obstacles.
+
+#### Example
+```
+Current position: (2, 3)
+Goal position: (8, 9)
+
+h(n)  =  |2 - 8| + |3 - 9|
+      =   6 + 6
+      = 12 moves minimum
+```
+#### Admissibility Proof
+
+For 4-way movement, Manhattan distance is admissible because:
+- It represents the minimum possible path (straight line in grid terms)
+- No valid path can be shorter than the Manhattan distance
+- This guarantees A* finds the optimal path
+
+#### Alternative Heuristics Considered
+| Heuristic | Formula | Admissible? | Why Not Used? |
+|-----------|---------|-------------|---------------|
+| **Manhattan** | `|x₁-x₂| + |y₁-y₂|` | ✅ Yes | ✅ **Selected** |
+| **Euclidean** | `√((x₁-x₂)² + (y₁-y₂)²)` | ❌ No* | Underestimates for 4-way movement |
+*Euclidean is admissible for 8-way diagonal movement but underestimates for 4-way movement, potentially finding suboptimal paths.
+
+#### Heuristic Impact on Performance
+
+The choice of heuristic affects:
+- **Nodes expanded**: Better heuristics explore less unnecessary nodes
+- **Optimality**: Admissible heuristics guarantee shortest path
+- **Computation time**: Complex heuristics may slow down each iteration
+Research shows Manhattan distance is optimal for grid based pathfinding with 4-way movement (Patel, 2019)
+
 ## Code Examples
 
 ### Grid Initialization
@@ -157,7 +219,7 @@ int main() {
 
 ### Position Struct Usage
 
-```
+```cpp
 //  Create positions
 Position start(1, 1)
 Position goal(8, 8)
@@ -176,6 +238,37 @@ if (start < goal) {
     cout << "Start comes before goal in ordering\n";
 }
 ```
+---
+
+### Helper Methods
+
+**Heuristic Function (Manhattan Distance)**
+```cpp
+double AStar::heuristic(const Position& a, const Position& b) const {
+    return abs(a.x - b.x) + abs(a.y - b.y);
+}
+```
+Estimates the minimum distance between two positions. Used by A* to prioritise which position to check first.
+
+**Get Neighbours**
+```cpp
+vector<Position> AStar::getNeighbors(const Position& pos) const {
+    // Returns positions: right, down, left, up
+    // 4-way movement (no diagonals)
+}
+```
+Returns all adjacent positions for the Manhattan 4-way grid movement.
+
+**Reconstruct Path**
+```cpp
+vector<Position> AStar::reconstructPath(
+    const map<Position, Position>& cameFrom, 
+    Position current) const {
+    // Traces backwards from goal to start
+    // Returns path from start to goal
+}
+```
+After A* finds the goal, this method traces backwards through the `cameFrom` map to build the complete path, instead of recording results as the algorithm finds the path, as it might explore many wrong paths before finding the goal. Also storing the entire path for every dead end is wasted memory, slow, and complex.
 
 ## Testing & Validation
 
@@ -238,8 +331,8 @@ I used lab sessions as checkpoints:
 **Learning:** Simple representations often work best during development; can refactor later if needed.
 
 #### Challenge 3: Understanding Operator Overloading
-**Problem:** Initially not clear to me why Position needed `operator<` and when to use is vs `operator==`
-**Solution:** Leared that `operator==` checks equality (if I am at the goal), while `operator<` defines ordering for containers like `std::map`. The map needs to organise positions, which requires a comparision function.
+**Problem:** Initially not clear to me why Position needed `operator<` and when to use it vs `operator==`
+**Solution:** Learned that `operator==` checks equality (if I am at the goal), while `operator<` defines ordering for containers like `std::map`. The map needs to organise positions, which requires a comparision function.
 **Learning:** Operator overloading makes custom types work good with S|TL containers. The `operator<` creates lexicographic ordering (compare x first, then y), similar to dictonary sorting.
 
 ### What Worked Well
@@ -251,6 +344,16 @@ I used lab sessions as checkpoints:
 - Start with file-based grid loading instead of hardcoded grids
 - Plan the Position struct earlier in the design phase
 - Use more comprehensive testing from the beginning
+
+### Key Learnings 
+
+1. **Algorithm Selection Matters**: Choosing Manhattan distance over Euclidean made the implementation simpler and guaranteed optimality for 4-way movement.
+
+2. **Memory vs. Speed Trade-offs**: Using `std::map` instead of `std::unordered_map` showed that optimization isn't always necessary, correctness come first.
+
+3. **Operator Overloading Power**: Implementing `operator<` and `operator==` made Position objects work seamlessly with STL containers, demonstrating how C++ enables custom types to feel "built-in".
+
+4. **Separation of methods**: Breaking A* into helper methods (heuristic, getNeighbors, reconstructPath) made the code easier to understand, test, and debug.
 
 ---
 
@@ -295,6 +398,10 @@ GitHub Copilot and ChatGPT were used for:
 6. [Setup std::vector in class constructor](https://stackoverflow.com/questions/11415469/setup-stdvector-in-class-constructor?newreg=3ea56c42483440c1947370acf4821c9d)
    
 7. [W3Schools - C++ Constructors](https://www.w3schools.com/cpp/cpp_constructors.asp)
+   
+8. Patel, A. (2019) - [Introduction to the A* Algorithm*. Red Blob Games.](https://www.redblobgames.com/pathfinding/a-star/introduction.html)
+   
+9. [C++ Reference - std::map](https://en.cppreference.com/w/cpp/container/map)
 
 ---
 
