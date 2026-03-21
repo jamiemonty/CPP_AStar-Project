@@ -75,26 +75,69 @@ The final design expands the MVP into a complete pathfinding system and seperate
 
 
 ### Class Structure
+This project is organised into small and focused types. Each type has a clear responsibility, which improves debugging, navigation, testing and readability.
 
-**AStar Class**
+---
+
+## **AStar Class**
 - **Purpose:** Manages the grid and performs pathfinding
 - **Private Members:**
   - `grid`: 2D vector storing cell types
   - `rows`, `cols`: Grid dimensions
+- **Private Helper Methods:**
+  - `heuristic`: Manhattan distance
+  - `getNeighbours`: generates 4 neighbour positions (4-way movement)
+  - `reconstructPath`: rebuilds the final path from goal to start then reverses for display
 - **Public Interface:**
-  - Constructor for initialization
-  - `setCell()`: Modify grid cells
-  - `PrintGrid()`: Visualize the grid
-  - `Solve()`: Perform A* pathfinding (to be implemented)
+  - `AStar`: constructs the base grid filled with `'.'`
+  - `setCell`: updates a cell with walls, start and goal markers
+  - `isPassable`: checks bounds and prevents going through walls (`#`)
+  - `PrintGrid`: prints an ASCII version of the grid to the console
+  - `Solve`: runs A* and returns a `PathResults` struct when complete
+  - `getGrid`: exposes the grid as read only for the SFML renderer (encapsulation)
+
+---
  
-**Position Struct**
-- **Purpose:** Represents a 2D  coordinate on the grid
+## **Position Struct**
+- **Purpose:** Represents a 2D coordinate on the grid.
 - **Members:**
     - `x`: Column coordinate
     - `y`: Row coordinate
 - **Operators:**
     - `operator==`: Enables position comparison (used to check if the goal is reached)
     - `operator<`: Enables use in `std::map` for path finding data structures
+ 
+---
+
+## **PathResults Struct**
+- **Purpose:** Bundles the output of the algorithm into one return value
+- **Members:**
+    - `pathFound`: wether a path exists or not
+    - `path`: the coordinates from start to finish
+    - `pathLength`: number of steps needed to be taken
+    - `nodesExpanded`: number of nodes popped from the open set and processed
+    - `executionTime`: runtime measured using `std::chrono`
+
+---
+
+## **Node Struct (internal helper)**
+- **Purpose:** Stores `(Position, fScore)` items inside the open set priority queue.
+- **Members:**
+  - `pos`: the position being considered
+  - `fScore`: priority value `f(n) = g(n) + h(n)`
+- **Why it exists:**
+  - Allows `std::priority_queue` to always expand the lowest `fScore` node next.
+
+---
+
+## **GridRenderer Class (SFML Visualiser)**
+- **Purpose:** Optional visualisation layer that draws the grid and the final path using SFML.
+- **How it interacts with the algorithm:**
+  - Reads the grid using `AStar::getGrid()`
+  - Draws the path using `PathResults.path`
+- **Design benefit:**
+  - Keeps rendering separate from pathfinding logic (clean separation of concerns).
+ 
 
 ### Design Decisions
 
