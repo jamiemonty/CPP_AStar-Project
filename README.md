@@ -1,4 +1,3 @@
-
 # A Star Pathfinding Algorithm
 ## C++ Programming Project
 
@@ -73,13 +72,12 @@ The final design expands the MVP into a complete pathfinding system and seperate
 <img width="1571" height="412" alt="image" src="https://github.com/user-attachments/assets/a81694b2-3ee8-47fc-b252-1b5a2956335f" />
 
 
-
 ### Class Structure
 This project is organised into small and focused types. Each type has a clear responsibility, which improves debugging, navigation, testing and readability.
 
 ---
 
-## **AStar Class**
+#### **AStar Class**
 - **Purpose:** Manages the grid and performs pathfinding
 - **Private Members:**
   - `grid`: 2D vector storing cell types
@@ -98,7 +96,7 @@ This project is organised into small and focused types. Each type has a clear re
 
 ---
  
-## **Position Struct**
+#### **Position Struct**
 - **Purpose:** Represents a 2D coordinate on the grid.
 - **Members:**
     - `x`: Column coordinate
@@ -109,7 +107,7 @@ This project is organised into small and focused types. Each type has a clear re
  
 ---
 
-## **PathResults Struct**
+#### **PathResults Struct**
 - **Purpose:** Bundles the output of the algorithm into one return value
 - **Members:**
     - `pathFound`: wether a path exists or not
@@ -120,7 +118,7 @@ This project is organised into small and focused types. Each type has a clear re
 
 ---
 
-## **Node Struct (internal helper)**
+#### **Node Struct (internal helper)**
 - **Purpose:** Stores `(Position, fScore)` items inside the open set priority queue.
 - **Members:**
   - `pos`: the position being considered
@@ -130,7 +128,7 @@ This project is organised into small and focused types. Each type has a clear re
 
 ---
 
-## **GridRenderer Class (SFML Visualiser)**
+#### **GridRenderer Class (SFML Visualiser)**
 - **Purpose:** Optional visualisation layer that draws the grid and the final path using SFML.
 - **How it interacts with the algorithm:**
   - Reads the grid using `AStar::getGrid()`
