@@ -566,27 +566,40 @@ At the end it prints: `TEST 4 COMPLETE`.
 
 ## Project Management
 
-### Development Timeline
+### Development Timeline (MVP)
 
 | Week | Date | Milestone | Status |
 |------|------|-----------|--------|
-| 1 | 19 Jan 2026 | Grid representation & constructor | Complete |
-| 2 | 26 Jan 2026 | Position struct, PathResult, helper methods | Complete |
-| 3 | 02 Feb 2026 | Weighted terrain | 📅 Planned |
-| 4 | 09 Feb 2026 | Testing & documentation | 📅 Planned |
+| 4 | 09th Feb 2026 | Grid representation & constructor | Complete |
+| 6 | 23rd Feb 2026 | Position struct, PathResult, helper methods | Complete |
+| 7 | 02nd Mar 2026 | Weighted terrain | Planned (idea scrapped) |
+| 9 | 16th Mar 2026 | Testing & documentation | Complete |
+
+### Actual Development Timeline
+
+| Week | Date | Milestone | Status |
+|------|------|-----------|--------|
+| 4 | 09th Feb 2026 | Grid representation & constructor | Complete |
+| 5 | 16th Feb 2026 | Position struct, PathResult, helper methods | Complete |
+| 6 | 23rd Feb 2026 | A* algorithm (`Solve`), path reconstruction, metrics (nodesExpanded + executionTime) | Complete |
+| 7 | 02nd Mar 2026 | Testing (No Path, Start=Goal, Edge Cases) + documentation updates | Complete |
+| 8 | 09th Mar 2026 | Complex maze scenario + path marking (`*`) | Complete |
+| 9 | 16th Mar 2026 | SFML GridRenderer visualisation integration | Complete |
 
 ### Tools & Environment
 - **IDE:** Visual Studio 2022
 - **Compiler:** MSVC with C++14 standard
-- **Version Control:** Git & GitHub
-- **Documentation:** GitHub Pages (Markdown)
+- **Version Control:** Git/GitHub & OneDrive
+- **Documentation:** GitHub Pages
 
-### Progress Tracking
-I used lab sessions as checkpoints:
-1. **Week 1:** Demonstrated grid printing and class structure
-2. **Week 2:** Will demonstrate pathfinding algorithm
-3. **Week 3:** Will demonstrate enhanced features
-
+#### Summary
+1. **Week 4:** Demonstrated grid printing, constructor-based initialisation, and `setCell()` wall placement
+2. **Week 5:** Demonstrated `Position` + `PathResults` and early A* structure (open set + score maps)
+3. **Week 6:** Demonstrated working `Solve()` including heuristic, neighbours, and reconstructing/marking the final path
+4. **Week 7:** Demonstrated testing and validation for general + edge scenarios
+5. **Week 8:** Demonstrated complex maze output and performance statistics
+6. **Week 9:** Demonstrated SFML visualisation showing the same path results in a graphical format
+   
 ---
 
 ## Reflection
