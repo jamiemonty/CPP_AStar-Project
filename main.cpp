@@ -1,28 +1,21 @@
-/*
- `....
-`..   `..   `..      `..
-`..         `..      `..
-`..     `...`.....`...`.....
-`..         `..      `..
-`..   `..   `..      `..
- `....
-
-Michelle Lynch
+/*   ____.              .__            _____                 __
+    |    |____    _____ |__| ____     /     \   ____   _____/  |_  ____   ____   _____   ___________ ___.__.
+    |    \__  \  /     \|  |/ __ \   /  \ /  \ /  _ \ /    \   __\/ ___\ /  _ \ /     \_/ __ \_  __ <   |  |
+/\__|    |/ __ \|  Y Y  \  \  ___/  /    Y    (  <_> )   |  \  | / /_/  >  <_> )  Y Y  \  ___/|  | \/\___  |
+\________(____  /__|_|  /__|\___  > \____|__  /\____/|___|  /__| \___  / \____/|__|_|  /\___  >__|   / ____|
+              \/      \/        \/          \/            \/    /_____/              \/     \/       \/
+Jamie Montgomery
+19/01/2026
 */
+#include <iostream>
+#include "AStar.h"
+#include "TestCases.h"
+#include <SFML/Graphics.hpp>
 
-#include <iostream>		    //	cerr, endl
-#include <stdexcept>	    //	out_of_range
-#include "Programmer.h"		//	Programmer
-#include "TestProgrammer.h"	//	Test functions
+int main() {
 
-int main(int argc, char** argv)
-{
-	try {
-		RunTests(argc, argv);
-	}
-	catch (std::out_of_range& e) {
-		std::cerr << std::endl << e.what() << std::endl;
-		return -1;
-	}
-	return 0;
+	testComplexMaze();
+    testNoPath();
+	testStartEqualsGoal();
+    return 0;
 }
