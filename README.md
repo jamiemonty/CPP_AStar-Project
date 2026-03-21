@@ -374,7 +374,7 @@ vector<Position> AStar::reconstructPath(
 
 **Explanation:**
 - During A*, the algorithm stores parent relationships in `cameFrom`.
-- Once the goal is reached, this method traces backwards from the goal to the start, then reverses the list to produce the final path in start→goal order.
+- Once the goal is reached, this method traces backwards from the goal to the start, then reverses the list to produce the final path in start to the goal order.
 - This avoids storing full paths for every explored node (which would waste memory and add complexity).
 
 ---
@@ -402,19 +402,17 @@ S . . . . . . . . . # . . . .
 . . . . # . . . . . . . . . .
 . . . . . . . . . . . . . . .
 . . . . . . . . . . . . . . G
-  Path length: 34 steps
-  Nodes expanded: 129
-  Execution time: 0.0010723 seconds
+
 ```
 
 **Explanation of the statistics:**
-- **Path length**: number of moves from `S` to `G` (calculated as `results.path.size() - 1`).
+- **Path length**: number of moves from `S` to `G` (calculated as `results.path.size() - 1`), minus 1 to avoid counting the goal position.
 - **Nodes expanded**: number of nodes removed from the open set (priority queue) and processed.
-- **Execution time**: time taken for `Solve()` measured using `std::chrono` (reported in seconds).
+- **Execution time**: time taken for `Solve()` measured using `std::chrono`.
 
 #### Maze With Solution Path
 
-After a valid path is found, the program iterates over `results.path` and marks each intermediate cell with `*`. The start and goal cells are not overwritten.
+After a valid path is found, the program iterates over `results.path` and marks path cells with `*`. The start and goal cells are not overwritten.
 
 ```
 Maze with Solution Path:
@@ -434,6 +432,10 @@ S . . . . . . . . . # . . . .
 . . . . # * . . . . . . . . .
 . . . . . * * * . . . . . . .
 . . . . . . . * * * * * * * G
+Path length: 34 steps
+Nodes expanded: 129
+Execution time: 0.0010723 seconds
+
 Path: (0,0) -> (1,0) -> (1,1) -> (1,2) -> (1,3) -> (1,4) -> (1,5) -> (1,6) ->
       (1,7) -> (2,7) -> (3,7) -> (4,7) -> (4,8) -> (5,8) -> (6,8) -> (7,8) ->
       (8,8) -> (9,8) -> (9,7) -> (9,6) -> (9,5) -> (10,5) -> (11,5) -> (12,5) ->
@@ -444,24 +446,121 @@ Path: (0,0) -> (1,0) -> (1,1) -> (1,2) -> (1,3) -> (1,4) -> (1,5) -> (1,6) ->
 **What the path list represents:**
 - This is the ordered list of positions returned by A* in `results.path`.
 - It is produced by storing parent relationships in `cameFrom` and reconstructing the path once the goal is found.
+
+
 ## Testing & Validation
 
 ### Test Cases
 
-#### Test 1: Basic Pathfinding
-**Setup:** 10×10 grid with vertical wall  
-**Expected:** Path found around obstacle  
-**Result:** ✅ Pass
+All test cases are implemented in `TestCases.cpp`. Each test creates a new grid, places walls/start/goal markers, runs `AStar::Solve(start, goal)`, and validates behaviour using the returned `PathResults` and printed output.
 
-#### Test 2: No Path Available
-**Setup:** Goal surrounded by walls  
-**Expected:** No path found  
-**Result:** ✅ Pass
+> Note: `main.cpp` currently runs `testComplexMaze()`, `testNoPath()`, and `testStartEqualsGoal()`. The `testBasicPathfinding()` function exists but is not currently called from `main.cpp`.
 
-#### Test 3: Start Equals Goal
-**Setup:** Same position for start and goal  
-**Expected:** Path length = 0  
-**Result:** ✅ Pass
+---
+
+#### Test 1: Basic Pathfinding (`testBasicPathfinding()`)
+**Purpose:** Confirms that A* can find a valid route around obstacles and that the returned path can be visualised on the grid.
+
+- **Setup:**
+  - Grid size: 10×10
+  - Obstacles:
+    - Vertical wall at column 5 for rows 2 to 7
+    - Horizontal wall at row 3 for columns 1 to 4
+  - Start: `(1, 1)` marked as `S`
+  - Goal: `(8, 3)` marked as `G`
+- **Expected:**
+  - `results.pathFound == true`
+  - A path is returned and marked on the grid with `'*'`
+- **Validation performed in code:**
+  - If `results.pathFound` is true:
+    - Prints: *Path Found!*
+    - Prints: path length, nodes expanded, execution time (seconds)
+    - Prints the coordinate path list
+    - Marks the path on the grid with `'*'` (without overwriting `S` or `G`) and prints the updated grid
+    - Prints: `TEST 1 PASSED`
+  - Otherwise prints: `TEST 1 FAILED`
+
+---
+
+#### Test 2: No Path Available (`testNoPath()`)
+**Purpose:** Ensures the algorithm correctly detects when a goal is unreachable.
+
+- **Setup:**
+  - Grid size: **10×10**
+  - Start: `(1, 1)` marked as `S`
+  - Goal: `(5, 5)` marked as `G`
+  - Obstacles: goal is surrounded on all four sides by walls (`#`)
+- **Expected:**
+  - `results.pathFound == false`
+- **Validation performed in code:**
+  - Prints the initial grid
+  - Runs A*
+  - If `results.pathFound` is false:
+    - Prints: `TEST 2 PASSED: Correctly detected no path`
+    - Prints nodes expanded + execution time (seconds)
+
+---
+
+#### Test 3: Start Equals Goal (`testStartEqualsGoal()`)
+**Purpose:** Validates the edge case where the start node is already the goal.
+
+- **Setup:**
+  - Grid size: 10×10
+  - Start: `(5, 5)`
+  - Goal: `(5, 5)`
+- **Expected:**
+  - `results.pathFound == true`
+  - `results.pathLength == 0`
+  - `results.nodesExpanded == 0`
+- **Validation performed in code:**
+  - Prints the initial grid
+  - Runs A*
+  - If `results.pathFound` is true and `results.pathLength == 0`:
+    - Prints: `TEST 3 PASSED`
+    - Prints nodes expanded (should be 0) and execution time (seconds)
+
+---
+
+#### Test 4: Edge Cases (`testEdgeCases()`)
+**Purpose:** Tests input validation and small boundary scenarios.
+
+This function contains three sub-tests:
+
+**Sub-test A: Start on Wall**
+- **Setup:** start cell is set to `'#'` and goal is set to `G`
+- **Expected:** `results.pathFound == false`
+
+**Sub-test B: Goal on Wall**
+- **Setup:** goal cell is set to `'#'` (not passable)
+- **Expected:** `results.pathFound == false`
+
+**Sub-test C: Adjacent Positions**
+- **Setup:** start and goal are next to each other 
+- **Expected:** `results.pathFound == true` and `results.pathLength == 1`
+
+At the end it prints: `TEST 4 COMPLETE`.
+
+---
+
+#### Test 5: Complex Maze (`testComplexMaze()`)
+**Purpose:** Stress-tests the algorithm on a larger grid, outputs performance statistics, prints the final marked path, and launches SFML visualisation.
+
+- **Setup:**
+  - Grid size: **15×15**
+  - Start: `(0, 0)` marked as `S`
+  - Goal: `(14, 14)` marked as `G`
+- **Expected:**
+  - `results.pathFound == true`
+  - A path is marked using `'*'` and the SFML renderer displays the result
+- **Validation performed in code:**
+  - If path found:
+    - Prints path length, nodes expanded, execution time (seconds)
+    - Marks the path with `'*'` and prints the solved maze
+    - Prints the coordinate path list
+    - Opens SFML window via `GridRenderer::render(grid, results)`
+  - If no path found:
+    - Prints failure message, nodes expanded
+    - Still opens SFML window (useful for debugging why it failed)
 
 ---
 
