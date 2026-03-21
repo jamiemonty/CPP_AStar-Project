@@ -232,7 +232,7 @@ For 4-way movement, Manhattan distance is admissible because:
 #### Alternative Heuristics Considered
 | Heuristic | Formula | Admissible? | Why Not Used? |
 |-----------|---------|-------------|---------------|
-| **Manhattan** | `|x₁-x₂| + |y₁-y₂|` | ✅ Yes | ✅ **Selected** |
+| **Manhattan** | `(|x₁-x₂| + |y₁-y₂|)` | ✅ Yes | ✅ **Selected** |
 | **Euclidean** | `√((x₁-x₂)² + (y₁-y₂)²)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement, adds unnecessary computation |
 
 #### Heuristic Impact on Performance
