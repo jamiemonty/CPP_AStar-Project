@@ -35,7 +35,7 @@ This project implements the A* pathfinding algorithm in modern C++ (C++11+) with
 ### Motivation
 A* is widely used in robotics, game development, and navigation systems because it can find an optimal path while exploring far fewer nodes than Dijkstra's algorithm. This project demonstrates understanding of:
 - Heuristic search algorithms using $$f(n) = g(n) + h(n)$$
-- Object-oriented design in C++by using methods and classes (Encapsulation) 
+- Object-oriented design in C++ by using methods and classes (Encapsulation) 
 - STL container usage (vectors, maps, priority queues)
 - Algorithm efficiency considerations (nodes expanded & execution time)
 
@@ -84,7 +84,7 @@ This project is organised into small and focused types. Each type has a clear re
   - `rows`, `cols`: Grid dimensions
 - **Private Helper Methods:**
   - `heuristic`: Manhattan distance
-  - `getNeighbours`: generates 4 neighbour positions (4-way movement)
+  - `getNeighbors`: generates 4 neighbour positions (4-way movement)
   - `reconstructPath`: rebuilds the final path from goal to start then reverses for display
 - **Public Interface:**
   - `AStar`: constructs the base grid filled with `'.'`
@@ -99,8 +99,8 @@ This project is organised into small and focused types. Each type has a clear re
 #### **Position Struct**
 - **Purpose:** Represents a 2D coordinate on the grid.
 - **Members:**
-    - `x`: Column coordinate
-    - `y`: Row coordinate
+    - `x`: row coordinate
+    - `y`: column coordinate
 - **Operators:**
     - `operator==`: Enables position comparison (used to check if the goal is reached)
     - `operator<`: Enables use in `std::map` for path finding data structures
@@ -110,7 +110,7 @@ This project is organised into small and focused types. Each type has a clear re
 #### **PathResults Struct**
 - **Purpose:** Bundles the output of the algorithm into one return value
 - **Members:**
-    - `pathFound`: wether a path exists or not
+    - `pathFound`: whether a path exists or not
     - `path`: the coordinates from start to finish
     - `pathLength`: number of steps needed to be taken
     - `nodesExpanded`: number of nodes popped from the open set and processed
@@ -180,7 +180,7 @@ I decided to use `std::map<Position, ...>` for storing position relationships in
     - `path`: Vector of positions from start to goal
     - `nodesExpanded`: Statistics on algorithm efficiency
     - `pathLength`: Number of steps in the path
-    - `executionTime`: Performance metric in milliseconds
+    - `executionTime`: Performance metric in seconds
 
 ## Algorithm Deep Dive
 
@@ -202,7 +202,7 @@ Where:
 
 I decided to go with the Manhattan distance as the heuristic function because:
 1. **Admissibility**: Manhattan distance never overestimates the actual path cost for 4-way grid movement
-2. **Consistency**: The heuristic is montonic (satisfies the triangle inequality)
+2. **Consistency**: The heuristic is monotonic (satisfies the triangle inequality)
 3. **Optimal for Grid Movement**: Good match for grids where diagonal movement is not allowed
 4. **Computational Efficiency**: Simple calculation (no square roots like Euclidean distance)
 
@@ -242,11 +242,13 @@ The choice of heuristic affects:
 - **Optimality**: Admissible heuristics guarantee shortest path
 - **Computation time**: Complex heuristics may slow down each iteration
 - 
-Research shows Manhattan distance is optimal for grid based pathfinding with 4-way movement (Patel, 2019)
+Research shows Manhattan distance is optimal for grid based pathfinding with 4-way movement ([8] Patel, 2019)
 
 ## Code Examples
 
 ### Grid Initialization
+
+This example creates a 10×10 grid, places walls (`#`), sets a start (`S`) and goal (`G`), then prints the grid before running A*.
 
 ```cpp
 int main() {
@@ -265,6 +267,11 @@ int main() {
     astar.PrintGrid();
 }
 ```
+
+**Explanation:**
+- `AStar grid(10, 10)` calls the constructor which initialises the grid with `'.'` open spaces.
+- `setCell()` is used to place walls and special markers.
+- The grid is printed using `PrintGrid()` for quick visual debugging.
 
 ### Output
 
@@ -286,57 +293,157 @@ int main() {
 
 ### Position Struct Usage
 
+`Position` represents a coordinate in the grid and supports operators that are needed by the algorithm and STL containers.
+
 ```cpp
-//  Create positions
-Position start(1, 1)
-Position goal(8, 8)
+// Create positions
+Position start(1, 1);
+Position goal(8, 3);
 
-// Place on grid
-astar.setCell(start.x, start.y, 'S');
-astar.setCell(goal.x, goal.y, 'G');
-
-// Check equality
+// Check equality (used to determine if the goal has been reached)
 if (start == goal) {
-    cout << "Already at goal!\n";
+    std::cout << "Already at goal!\n";
 }
 
-// Compare positions (for std::map)
+// Ordered comparison (required for std::map keys)
 if (start < goal) {
-    cout << "Start comes before goal in ordering\n";
+    std::cout << "Start comes before goal in ordering\n";
 }
 ```
+
+**Explanation:**
+- `operator==` is used for comparisons such as `current == goal`.
+- `operator<` defines an ordering so `Position` can be used as a key in `std::map` (used for `gScore`, `fScore`, and `cameFrom`).
+
 ---
 
 ### Helper Methods
 
-**Heuristic Function (Manhattan Distance)**
+#### Heuristic Function (Manhattan Distance)
+
 ```cpp
 double AStar::heuristic(const Position& a, const Position& b) const {
     return abs(a.x - b.x) + abs(a.y - b.y);
 }
 ```
-Estimates the minimum distance between two positions. Used by A* to prioritise which position to check first.
 
-**Get Neighbours**
+**Explanation:**
+This returns the Manhattan distance between two positions, which is suitable for 4-way movement. A* uses this value as `h(n)` when calculating `f(n) = g(n) + h(n)`.
+
+---
+
+#### Get Neighbours (4-way movement)
+
 ```cpp
 vector<Position> AStar::getNeighbors(const Position& pos) const {
-    // Returns positions: right, down, left, up
-    // 4-way movement (no diagonals)
+    vector<Position> neighbors;
+
+    neighbors.push_back(Position(pos.x + 1, pos.y)); // Right
+    neighbors.push_back(Position(pos.x, pos.y + 1)); // Down
+    neighbors.push_back(Position(pos.x - 1, pos.y)); // Left
+    neighbors.push_back(Position(pos.x, pos.y - 1)); // Up
+
+    return neighbors;
 }
 ```
-Returns all adjacent positions for the Manhattan 4-way grid movement.
 
-**Reconstruct Path**
+**Explanation:**
+This generates the four adjacent positions. The algorithm then checks each neighbour using `isPassable()` to ensure it is within bounds and not a wall (`#`).
+
+---
+
+#### Reconstruct Path (backtracking using `cameFrom`)
+
 ```cpp
 vector<Position> AStar::reconstructPath(
-    const map<Position, Position>& cameFrom, 
-    Position current) const {
-    // Traces backwards from goal to start
-    // Returns path from start to goal
+    const map<Position, Position>& cameFrom,
+    Position current
+) const {
+    vector<Position> path;
+    path.push_back(current);
+
+    while (cameFrom.find(current) != cameFrom.end()) {
+        current = cameFrom.at(current);
+        path.push_back(current);
+    }
+
+    reverse(path.begin(), path.end());
+    return path;
 }
 ```
-After A* finds the goal, this method traces backwards through the `cameFrom` map to build the complete path, instead of recording results as the algorithm finds the path, as it might explore many wrong paths before finding the goal. Also storing the entire path for every dead end is wasted memory, slow, and complex.
 
+**Explanation:**
+- During A*, the algorithm stores parent relationships in `cameFrom`.
+- Once the goal is reached, this method traces backwards from the goal to the start, then reverses the list to produce the final path in start→goal order.
+- This avoids storing full paths for every explored node (which would waste memory and add complexity).
+
+---
+
+### Example Output: `testComplexMaze()` (A* in action)
+
+This test demonstrates A* solving a larger 15×15 maze. The first grid shows the maze layout before solving. After calling `Solve(start, goal)`, the program prints performance statistics and then prints the grid again with the final path marked using `*`.
+
+#### Initial Maze Grid
+
+```
+--- A * Grid ---
+S . . . . . . . . . # . . . .
+. . . . . . . . . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . . . . . # . . . .
+# # # # # # # # . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . . . . . # . . . .
+. . . . # . # # # # # # # # #
+. . . . # . . . . . . . . . .
+. . . . # . . . . . . . . . .
+. . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . G
+  Path length: 34 steps
+  Nodes expanded: 129
+  Execution time: 0.0010723 seconds
+```
+
+**Explanation of the statistics:**
+- **Path length**: number of moves from `S` to `G` (calculated as `results.path.size() - 1`).
+- **Nodes expanded**: number of nodes removed from the open set (priority queue) and processed.
+- **Execution time**: time taken for `Solve()` measured using `std::chrono` (reported in seconds).
+
+#### Maze With Solution Path
+
+After a valid path is found, the program iterates over `results.path` and marks each intermediate cell with `*`. The start and goal cells are not overwritten.
+
+```
+Maze with Solution Path:
+--- A * Grid ---
+S . . . . . . . . . # . . . .
+* * * * * * * * . . # . . . .
+. . . . # . . * . . # . . . .
+. . . . # . . * . . # . . . .
+. . . . # . . * * . # . . . .
+. . . . # . . . * . # . . . .
+. . . . # . . . * . # . . . .
+# # # # # # # # * . # . . . .
+. . . . # . . . * . # . . . .
+. . . . # * * * * . # . . . .
+. . . . # * # # # # # # # # #
+. . . . # * . . . . . . . . .
+. . . . # * . . . . . . . . .
+. . . . . * * * . . . . . . .
+. . . . . . . * * * * * * * G
+Path: (0,0) -> (1,0) -> (1,1) -> (1,2) -> (1,3) -> (1,4) -> (1,5) -> (1,6) ->
+      (1,7) -> (2,7) -> (3,7) -> (4,7) -> (4,8) -> (5,8) -> (6,8) -> (7,8) ->
+      (8,8) -> (9,8) -> (9,7) -> (9,6) -> (9,5) -> (10,5) -> (11,5) -> (12,5) ->
+      (13,5) -> (13,6) -> (13,7) -> (14,7) -> (14,8) -> (14,9) -> (14,10) -> (14,11) ->
+      (14,12) -> (14,13) -> (14,14)
+```
+
+**What the path list represents:**
+- This is the ordered list of positions returned by A* in `results.path`.
+- It is produced by storing parent relationships in `cameFrom` and reconstructing the path once the goal is found.
 ## Testing & Validation
 
 ### Test Cases
