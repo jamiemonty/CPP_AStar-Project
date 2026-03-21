@@ -47,7 +47,7 @@ A* is widely used in robotics, game development, and navigation systems because 
 ### Architecture
 
 #### UML Class Diagram (MVP)
-This is where I began, I found a tool to visualise the minimal viable products UML Class Diagram, this is subject to change as I hope to add more features along the way. 
+This is where I began, I found a tool to visualise the minimal viable products UML Class Diagram (src="plantuml.com"), this is subject to change as I hope to add more features along the way. 
 
 <img width="693" height="281" alt="image" src="https://github.com/user-attachments/assets/98d98a83-a078-4766-a187-883fa0f50ec6" />
 
