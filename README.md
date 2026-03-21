@@ -1,5 +1,5 @@
 
-**# A* Pathfinding Algorithm
+# A Star Pathfinding Algorithm
 ## C++ Programming Project
 
 **Author:** Jamie Montgomery  
@@ -25,15 +25,17 @@
 
 ### Objectives
 This project implements the A* pathfinding algorithm in modern C++ (C++11+) with the following features:
-- Grid-based representation with obstacles
-- Manhattan heuristic for distance estimation
-- 4-way movement (extensible to 8-way)
-- Weighted terrain support
-- Visual ASCII output
+- Create a grid-based environment with obstacles
+- Use the Manhattan distance heuristic to estimate remaining cost to the goal
+- 4-way movement (up, down, left, right) for pathfinding
+- Output the grid and the solved path using ASCII console visualisation
+- Provide an SFML-based visualisation of the grid and final path
+- Record performance statistics, including nodes expanded and execution time
+- Validate using unit-style test cases, including general and edge scenarios
 
 ### Motivation
-A* is widely used in robotics, game development, and navigation systems. This project demonstrates understanding of:
-- Heuristic search algorithms
+A* is widely used in robotics, game development, and navigation systems because it can find an optimal path while exploring far fewer nodes than the likes of Dijkstra's algorithm. This project demonstrates understanding of:
+- Heuristic search algorithms using $$f(n) = g(n) + h(n)$$
 - Object-oriented design in C++
 - STL container usage
 - Algorithm efficiency considerations
