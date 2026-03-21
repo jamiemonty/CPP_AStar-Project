@@ -48,8 +48,27 @@ A* is widely used in robotics, game development, and navigation systems because 
 
 #### UML Class Diagram (MVP)
 This is where I began, I found a tool to visualise the minimal viable products UML Class Diagram (src="plantuml.com"), this is subject to change as I hope to add more features along the way. 
+It focused on a minimal working grid system:
+
+- A single AStar class stored the grid
+- Supported setting cells (`setCell`), validating movement (`isPassable`), and printing the grid output (`PrintGrid`)
+- This was to prove the grid representation worked and could display walls, start and goal correctly.
 
 <img width="693" height="281" alt="image" src="https://github.com/user-attachments/assets/98d98a83-a078-4766-a187-883fa0f50ec6" />
+
+#### Final Implementation
+The final design expands the MVP into a complete pathfinding system and seperates concerns (abstraction): 
+
+**New structures added:**
+- **Position (struct):** represents `(x, y)` coordinates and supports `operator==` (goal check) and `operator<` (use as a key in `std::map`)
+- **PathResults (struct):** returns the full results (pathFound, path, pathLength, nodesExpanded, executionTime)
+- **Node (struct):** helper type stored in the priority queue so the open set is ordered by lowest `fScore`
+- **GridRenderer (class):** SFML-based visualiser that reads the grid and draws the final path
+
+**Key improvement from MVP --> Final Product:**
+- The algorithm now runs through `Solve(start, goal)` and returns structured results instead of relying on print-only output.
+- A* is modularised into helper methods (`heuristic`, `getNeighbors`, `reconstructPath`) which improves readability, testing, and explanation.
+- Visualisation is separated from pathfinding logic (SFML is optional), improving reuse and maintainability.
 
 <img width="1571" height="412" alt="image" src="https://github.com/user-attachments/assets/a81694b2-3ee8-47fc-b252-1b5a2956335f" />
 
