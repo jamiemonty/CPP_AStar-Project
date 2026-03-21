@@ -160,14 +160,13 @@ I chose `char` for cell types rather than `int` or enum for clarity:
 - `#` = wall
 - `S` = start
 - `G` = goal
-- Future: `r`, `g`, `w` for terrain types
 
 This makes visual debugging immediate and intuitive.
 
 ---
 
 #### std::map vs std::unordered_map
-I decided to use `std::map<Position>` for storing position relationships in the A* rather than `std::unordered_map`. While unordered_map offers 0(1) average lookup time vs maps 0(log n), this required implementing a custom hash function for Position.
+I decided to use `std::map<Position, ...>` for storing position relationships in the A* rather than `std::unordered_map`. While unordered_map offers 0(1) average lookup time vs maps 0(log n), this required implementing a custom hash function for Position.
 **Rationale:**
 - Map only requires `operator<`, which demonstrates operator overloading clearly
 - For grid sizes used in testing (10x10), the performance difference is unnoticable
@@ -181,7 +180,7 @@ I decided to use `std::map<Position>` for storing position relationships in the 
     - `path`: Vector of positions from start to goal
     - `nodesExpanded`: Statistics on algorithm efficiency
     - `pathLength`: Number of steps in the path
-    - `timeTaken`: Performance metric in milliseconds
+    - `executionTime`: Performance metric in milliseconds
 
 ## Algorithm Deep Dive
 
@@ -234,8 +233,7 @@ For 4-way movement, Manhattan distance is admissible because:
 | Heuristic | Formula | Admissible? | Why Not Used? |
 |-----------|---------|-------------|---------------|
 | **Manhattan** | `|x₁-x₂| + |y₁-y₂|` | ✅ Yes | ✅ **Selected** |
-| **Euclidean** | `√((x₁-x₂)² + (y₁-y₂)²)` | ❌ No* | Underestimates for 4-way movement |
-*Euclidean is admissible for 8-way diagonal movement but underestimates for 4-way movement, potentially finding suboptimal paths.
+| **Euclidean** | `√((x₁-x₂)² + (y₁-y₂)²)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement, adds unnecessary computation |
 
 #### Heuristic Impact on Performance
 
@@ -243,6 +241,7 @@ The choice of heuristic affects:
 - **Nodes expanded**: Better heuristics explore less unnecessary nodes
 - **Optimality**: Admissible heuristics guarantee shortest path
 - **Computation time**: Complex heuristics may slow down each iteration
+- 
 Research shows Manhattan distance is optimal for grid based pathfinding with 4-way movement (Patel, 2019)
 
 ## Code Examples
