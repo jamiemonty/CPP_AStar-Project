@@ -34,7 +34,7 @@ This project implements the A* pathfinding algorithm in modern C++ (C++11+) with
 - Validate using unit-style test cases, including general and edge scenarios
 
 ### Motivation
-A* is widely used in robotics, game development, and navigation systems because it can find an optimal path while exploring far fewer nodes than the likes of Dijkstra's algorithm. This project demonstrates understanding of:
+A* is widely used in robotics, game development, and navigation systems because it can find an optimal path while exploring far fewer nodes than Dijkstra's algorithm. This project demonstrates understanding of:
 - Heuristic search algorithms using $$f(n) = g(n) + h(n)$$
 - Object-oriented design in C++by using methods and classes (Encapsulation) 
 - STL container usage (vectors, maps, priority queues)
