@@ -230,11 +230,11 @@ For 4-way movement, Manhattan distance is admissible because:
 - This guarantees A* finds the optimal path
 
 #### Alternative Heuristics Considered
-| Heuristic | Formula | Admissible? | Why Not Used? |
-|-----------|---------|-------------|---------------|
-| **Manhattan** | `(|x₁-x₂| + |y₁-y₂|)` | ✅ Yes | ✅ **Selected** |
-| **Euclidean** | `√((x₁-x₂)² + (y₁-y₂)²)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement, adds unnecessary computation |
 
+| Heuristic | Formula | Admissible? | Why Not Used? |
+|---|---|---|---|
+| **Manhattan** | `abs(x1 - x2) + abs(y1 - y2)` | ✅ Yes | ✅ **Selected** |
+| **Euclidean** | `sqrt((x1 - x2)^2 + (y1 - y2)^2)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement; extra computation |
 #### Heuristic Impact on Performance
 
 The choice of heuristic affects:
