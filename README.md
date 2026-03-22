@@ -447,6 +447,107 @@ Path: (0,0) -> (1,0) -> (1,1) -> (1,2) -> (1,3) -> (1,4) -> (1,5) -> (1,6) ->
 - This is the ordered list of positions returned by A* in `results.path`.
 - It is produced by storing parent relationships in `cameFrom` and reconstructing the path once the goal is found.
 
+---
+
+## Build & Run (Visual Studio 2022)
+
+### Requirements
+- **Visual Studio 2022**
+- **C++ standard:** C++17 (required for the SFML visualiser setup below)
+
+### Run (Console Output Only)
+1. Open the project/solution in **Visual Studio 2022**
+2. Select **Debug** or **Release**
+3. Build: **Build → Build Solution**
+4. Run: **Debug → Start Without Debugging** (or press `Ctrl + F5`)
+5. The program will run the test cases from `main.cpp`.
+
+### Run (With SFML Visualiser - Optional)
+The SFML visualiser is used to display the final path produced by A* in a window (see `GridRenderer`).
+
+If SFML is installed and configured correctly:
+1. Build and run the project as normal (`Ctrl + F5`)
+2. Run the complex maze test (e.g. `testComplexMaze()`), which calls:
+   - `GridRenderer::render(grid, results)`
+
+**If SFML is not installed, you can still run console-only tests by commenting out the SFML render call.**
+
+---
+
+## SFML Visualiser Setup 
+
+SFML is an optional part of this project used to visualise the final path produced by the A* algorithm (`GridRenderer`). If you only want console output, you can build and run the project without SFML.
+
+### Why SFML was needed
+The console output shows the maze and the solved path using ASCII characters, but SFML allowed me to display the same result in a clearer graphical window.
+
+<img width="605" height="640" alt="image" src="https://github.com/user-attachments/assets/b97d12a2-e236-4dd6-b787-468191c70427" />
+
+---
+
+## Installing SFML using vcpkg (recommended)
+
+I installed SFML using **vcpkg** (Microsoft’s C++ package manager) and integrated it with Visual Studio so that installed libraries can be found automatically.
+
+**vcpkg repository:**
+```text
+https://github.com/microsoft/vcpkg
+```
+
+### What went wrong (NuGet)
+I first attempted to install SFML using NuGet, but Visual Studio reported a targeting/configuration mismatch and the install failed.
+
+<img width="940" height="95" alt="image" src="https://github.com/user-attachments/assets/fb8f0dbe-bd76-4a77-9463-ad46b96dc6b5" />
+
+
+### Fix (vcpkg approach)
+
+The following steps show exactly how I set up vcpkg on my `C:` drive and installed SFML.
+
+<img width="460" height="676" alt="image" src="https://github.com/user-attachments/assets/fbb4961b-10fc-4443-ab2f-1fe10c74fbed" />
+
+#### Step 1: Clone and bootstrap vcpkg
+Open **PowerShell** and run:
+
+```powershell
+cd C:\
+git clone https://github.com/microsoft/vcpkg
+cd vcpkg
+.\bootstrap-vcpkg.bat
+```
+
+#### Step 2: Enable Visual Studio integration
+This allows Visual Studio to automatically detect libraries installed through vcpkg:
+
+```powershell
+.\vcpkg integrate install
+```
+
+#### Step 3: Install SFML (64-bit)
+```powershell
+.\vcpkg install sfml:x64-windows
+```
+
+<img width="940" height="572" alt="image" src="https://github.com/user-attachments/assets/213e2518-9f59-4647-8da2-d5150e92aa18" />
+
+---
+
+## Visual Studio Project Configuration (C++17)
+
+To support SFML and other modern C++ features, I set my project language standard to **C++17**:
+
+1. Right-click the project → **Properties**
+2. **C/C++ → Language → C++ Language Standard**
+3. Select **ISO C++17 Standard (/std:c++17)**
+4. Apply and rebuild
+
+---
+
+## Running the SFML visualiser
+
+After SFML is installed and configured, build and run the project normally. The SFML window is launched from the complex maze test (e.g. `testComplexMaze()`), which calls:
+
+---
 
 ## Testing & Validation
 
