@@ -11,19 +11,23 @@
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
-2. [Design & Implementation](#design--implementation)
-3. [Code Examples](#code-examples)
-4. [Testing & Validation](#testing--validation)
-5. [Project Management](#project-management)
-6. [Reflection](#reflection)
-7. [References](#references)
+2. [Design and Implementation](#design-and-implementation)
+3. [Algorithm Deep Dive](#algorithm-deep-dive)
+4. [Code Examples](#code-examples)
+5. [Build and Run (Visual Studio 2022)](#build-and-run-visual-studio-2022)
+6. [SFML Visualiser Setup](#sfml-visualiser-setup)
+7. [Testing and Validation](#testing-and-validation)
+8. [Project Management](#project-management)
+9. [Reflection](#reflection)
+10. [AI Assistance Disclosure](#ai-assistance-disclosure)
+11. [References](#references)
 
 ---
 
 ## Project Overview
 
 ### Objectives
-This project implements the A* pathfinding algorithm in modern C++ (C++11+) with the following features:
+This project implements the A* pathfinding algorithm in modern C++ (C++14+) with the following features:
 - Create a grid-based environment with obstacles
 - Use the Manhattan distance heuristic to estimate remaining cost to the goal
 - 4-way movement (up, down, left, right) for pathfinding
@@ -41,7 +45,7 @@ A* is widely used in robotics, game development, and navigation systems because 
 
 ---
 
-## Design & Implementation
+## Design and Implementation
 
 ### Architecture
 
@@ -142,7 +146,7 @@ This project is organised into small and focused types. Each type has a clear re
 #### Why Use a Constructor?
 I chose to use a constructor with a member initializer list for several reasons:
 1. **Automatic initialization:** Ensures the grid is always in a valid state
-2. **Modern C++ best practice:** Aligns with C++11+ standards
+2. **Modern C++ best practice:** Aligns with C++14+ standards
 3. **Efficiency:** Member initializer lists are more efficient than assignment in the constructor body
 4. **Safety:** Prevents creation of uninitialized objects
 
@@ -234,7 +238,8 @@ For 4-way movement, Manhattan distance is admissible because:
 | Heuristic | Formula | Admissible? | Why Not Used? |
 |---|---|---|---|
 | **Manhattan** | `abs(x1 - x2) + abs(y1 - y2)` | ✅ Yes | ✅ **Selected** |
-| **Euclidean** | `sqrt((x1 - x2)^2 + (y1 - y2)^2)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement; extra computation |
+| **Euclidean** | `sqrt((x1 - x2)^2 + (y1 - y2)^2)` | ✅ Yes | Weaker guidance than Manhattan for 4-way movement, extra computation |
+
 #### Heuristic Impact on Performance
 
 The choice of heuristic affects:
@@ -547,9 +552,12 @@ To support SFML and other modern C++ features, I set my project language standar
 
 After SFML is installed and configured, build and run the project normally. The SFML window is launched from the complex maze test (e.g. `testComplexMaze()`), which calls:
 
+```cpp
+GridRenderer::render(grid, results);
+```
 ---
 
-## Testing & Validation
+## Testing and Validation
 
 ### Test Cases
 
@@ -812,7 +820,3 @@ GitHub Copilot and ChatGPT were used for:
 13. [vcpkg Documentation - Getting Started](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started)
 
 ---
-
-**Repository:** [github.com/jamiemonty/cpp-astar-project](https://github.com/jamiemonty/cpp-astar-project)
-
-**Live Site:** [jamiemonty.github.io/cpp-astar-project](https://jamiemonty.github.io/cpp-astar-project)
