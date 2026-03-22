@@ -406,7 +406,7 @@ S . . . . . . . . . # . . . .
 ```
 
 **Explanation of the statistics:**
-- **Path length**: number of moves from `S` to `G` (calculated as `results.path.size() - 1`), minus 1 to avoid counting the goal position.
+- **Path length**: number of moves from `S` to `G` (calculated as `results.path.size() - 1`), minus 1 to avoid counting the start position as a step, this is done in the reconstructPath member function.
 - **Nodes expanded**: number of nodes removed from the open set (priority queue) and processed.
 - **Execution time**: time taken for `Solve()` measured using `std::chrono`.
 
@@ -619,7 +619,7 @@ At the end it prints: `TEST 4 COMPLETE`.
 #### Challenge 3: Understanding Operator Overloading
 **Problem:** Initially not clear to me why Position needed `operator<` and when to use it vs `operator==`
 **Solution:** Learned that `operator==` checks equality (if I am at the goal), while `operator<` defines ordering for containers like `std::map`. The map needs to organise positions, which requires a comparision function.
-**Learning:** Operator overloading makes custom types work good with S|TL containers. The `operator<` creates lexicographic ordering (compare x first, then y), similar to dictonary sorting.
+**Learning:** Operator overloading makes custom types work good with STL containers. The `operator<` creates lexicographic ordering (compare x first, then y), similar to dictonary sorting.
 
 ### What Worked Well
 - **Incremental development:** Building MVP first gave a solid foundation
@@ -635,11 +635,15 @@ At the end it prints: `TEST 4 COMPLETE`.
 
 1. **Algorithm Selection Matters**: Choosing Manhattan distance over Euclidean made the implementation simpler and guaranteed optimality for 4-way movement.
 
-2. **Memory vs. Speed Trade-offs**: Using `std::map` instead of `std::unordered_map` showed that optimization isn't always necessary, correctness come first.
+2. **Memory vs. Speed Trade-offs**: Using `std::map` instead of `std::unordered_map` showed that optimisation isn't always necessary, correctness come first.
 
-3. **Operator Overloading Power**: Implementing `operator<` and `operator==` made Position objects work seamlessly with STL containers, demonstrating how C++ enables custom types to feel "built-in".
+3. **Operator Overloading Power**: Implementing `operator<` and `operator==` made Position objects work well with STL containers, demonstrating how C++ enables custom types to feel "built-in".
 
 4. **Separation of methods**: Breaking A* into helper methods (heuristic, getNeighbors, reconstructPath) made the code easier to understand, test, and debug.
+
+### Reflection Summary
+
+Overall, the biggest improvement in my understanding of the A Star algorithm came from moving from a MVP grid printer to a complete A Star solution that returns structured results, watching YouTube videos Michelle gave us the link to on Moodle also gave me a greater understanding of how the A Star algorithm finds the quickest and suitable path through expanding nodes. The part I found the most challenging at first was keeping track of cameFrom, but once I understood it, reconstructing the final path made sense to me. 
 
 ---
 
@@ -652,20 +656,29 @@ GitHub Copilot and ChatGPT were used for:
 - Debugging compilation errors
 - Clarifying A* algorithm pseudocode
 - Explaining operator overloading
-- Understanding std::map requirements and hash functions
-- Clarifying Path Result struct design patterns
+- Understanding `std::map` requirements and hash functions
+- Clarifying PathResult struct design patterns
 
 ### How AI Was Used Appropriately
 - All code suggestions were **adapted to my design**
 - I **fully understand** every line of code in my project
 - AI was used for **learning and clarification**, not copy-pasting solutions
 - Code snippets were **modified and integrated** into my unique implementation
+- Any AI suggestions were **verified by compiling and running my own test cases** (console output + SFML visualisation)
+- AI was used to **help structure the report layout** (headings/section order) and to **spellcheck/grammar-check** text
+
+### What AI Was Not Used For
+- AI was not used to generate a complete solution end-to-end
+- AI was not used to write the full A* implementation without my own changes and understanding
+- AI was not used to produce the final report without editing and ensuring technical accuracy
 
 ### Independent Work
 - Grid design decisions were mine
 - Class structure and method naming were my choices
 - Testing scenarios were designed by me
 - All demonstrations showed my understanding
+- I designed the maze layouts and obstacle patterns used in TestCases.cpp.
+- I integrated the SFML visualiser (`GridRenderer`) to display the final path produced by my A* algorithm, and I configured my local project environment (SFML via vcpkg on `C:` and Visual Studio C++17 settings) so the visualiser would compile and run correctly.
 
 ---
 
