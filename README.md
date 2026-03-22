@@ -803,6 +803,14 @@ GitHub Copilot and ChatGPT were used for:
    
 9. [C++ Reference - std::map](https://en.cppreference.com/w/cpp/container/map)
 
+10. [SFML - Simple and Fast Multimedia Library (Official Website)](https://www.sfml-dev.org/)
+
+11. [SFML GitHub Repository](https://github.com/SFML/SFML)
+
+12. [vcpkg (C++ Library Manager) - GitHub Repository](https://github.com/microsoft/vcpkg)
+
+13. [vcpkg Documentation - Getting Started](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started)
+
 ---
 
 **Repository:** [github.com/jamiemonty/cpp-astar-project](https://github.com/jamiemonty/cpp-astar-project)
