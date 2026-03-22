@@ -246,7 +246,7 @@ The choice of heuristic affects:
 - **Nodes expanded**: Better heuristics explore less unnecessary nodes
 - **Optimality**: Admissible heuristics guarantee shortest path
 - **Computation time**: Complex heuristics may slow down each iteration
-- 
+  
 Research shows Manhattan distance is optimal for grid based pathfinding with 4-way movement ([8] Patel, 2019)
 
 ## Code Examples
